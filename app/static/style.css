@@ -1,0 +1,912 @@
+/* ==========================================================================
+   Ark — design tokens
+   "Notion x Twitter": Twitter's feed grammar (avatars, handles, timestamps,
+   reply threading, engagement row) rendered inside Notion's visual language
+   (soft off-white canvas, white cards with hairline borders and gentle
+   shadow, black rounded-square app-icon mark, restrained color used only
+   where it's load-bearing). Amber stays as Ark's one signature accent —
+   used sparingly, like Notion's colorful-but-muted widget icons — instead
+   of being the whole palette.
+   ========================================================================== */
+
+:root {
+  --bg: #F7F7F5;
+  --bg-card: #FFFFFF;
+  --bg-hover: #F0F0EE;
+  --bg-sunken: #EFEEEB;
+  --border: #E7E6E3;
+  --border-strong: #D8D7D3;
+  --text: #1F1F1F;
+  --text-dim: #6B6A66;
+  --text-faint: #9B9A96;
+  --black: #111110;
+  --accent: #2F6FED;
+  --accent-soft: rgba(47, 111, 237, 0.09);
+  --amber: #C68A2E;
+  --amber-dim: #B08A4E;
+  --amber-soft: rgba(198, 138, 46, 0.12);
+  --amber-border: rgba(198, 138, 46, 0.35);
+  --red: #D2493C;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-card: 0 1px 2px rgba(20, 20, 19, 0.04), 0 1px 8px rgba(20, 20, 19, 0.03);
+  --shadow-card-hover: 0 2px 6px rgba(20, 20, 19, 0.06), 0 4px 16px rgba(20, 20, 19, 0.05);
+  --nav-height: 64px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  height: 100%;
+}
+
+a { color: inherit; }
+
+button:focus-visible,
+textarea:focus-visible,
+input:focus-visible,
+.sim-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Brand mark — black rounded-square app icon, Notion-style                */
+/* ---------------------------------------------------------------------- */
+
+.brand-mark {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--black);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 17px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.brand-mark svg { width: 58%; height: 58%; }
+
+.brand-mark.small { width: 26px; height: 26px; font-size: 12px; border-radius: 7px; }
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-word { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+
+/* ---------------------------------------------------------------------- */
+/* Layout                                                                  */
+/* ---------------------------------------------------------------------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 600px) 300px;
+  gap: 20px;
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.col-left {
+  position: sticky;
+  top: 20px;
+  align-self: start;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.col-center { min-height: 100vh; }
+
+.col-right {
+  position: sticky;
+  top: 20px;
+  align-self: start;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.brand-block { padding: 4px 4px 0; }
+.brand-tag { color: var(--text-dim); font-size: 13px; margin: 8px 0 0; }
+
+.side-page {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+}
+
+.side-page-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 0 0 14px;
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Mobile topbar                                                           */
+/* ---------------------------------------------------------------------- */
+
+.mobile-topbar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--bg);
+  font-weight: 800;
+  font-size: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Composer                                                                 */
+/* ---------------------------------------------------------------------- */
+
+.composer { display: flex; flex-direction: column; gap: 10px; }
+
+.composer label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.composer textarea,
+.composer input {
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 12px;
+}
+
+.composer textarea { resize: vertical; min-height: 120px; }
+
+.composer textarea:focus, .composer input:focus {
+  border-color: var(--accent);
+  outline: none;
+  background: var(--bg-card);
+}
+
+.composer button {
+  background: var(--black);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 16px;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.composer button:hover:not(:disabled) { opacity: 0.85; }
+.composer button:disabled { opacity: 0.45; cursor: progress; }
+
+.composer-hint { min-height: 16px; font-size: 12px; color: var(--red); }
+
+/* ---------------------------------------------------------------------- */
+/* Library list                                                            */
+/* ---------------------------------------------------------------------- */
+
+.sim-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.sim-item {
+  padding: 10px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid transparent;
+}
+
+.sim-item:hover { background: var(--bg-hover); }
+.sim-item.active { background: var(--accent-soft); border-color: rgba(47,111,237,0.2); }
+.sim-title { font-size: 14px; font-weight: 600; }
+.sim-meta { font-size: 12px; color: var(--text-faint); font-family: var(--font-mono); }
+
+/* ---------------------------------------------------------------------- */
+/* Account                                                                  */
+/* ---------------------------------------------------------------------- */
+
+.account-card { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.user-badge { color: var(--text-dim); font-size: 13px; margin: 0; line-height: 1.5; }
+.user-badge strong { color: var(--text); }
+
+.logout-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: var(--bg-card);
+}
+
+.logout-link:hover { background: var(--bg-hover); }
+
+/* ---------------------------------------------------------------------- */
+/* Ticker — the signature element, now a card instead of a full-bleed bar  */
+/* ---------------------------------------------------------------------- */
+
+.ticker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--amber-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--amber);
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-card);
+  flex-wrap: wrap;
+}
+
+.ticker-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex-shrink: 0;
+}
+
+.ticker-dot.live { animation: pulse 1.4s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--amber-soft); }
+  50% { opacity: 0.5; box-shadow: 0 0 0 5px transparent; }
+}
+
+.ticker-label { font-weight: 800; letter-spacing: 0.08em; }
+.ticker-sep { color: var(--amber-border); }
+.ticker-status { color: var(--text); font-weight: 600; font-family: var(--font-body); }
+.ticker-date { color: var(--amber); margin-left: auto; }
+
+.exit-btn {
+  background: transparent;
+  border: 1px solid var(--amber-border);
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.exit-btn:hover { background: var(--amber-soft); }
+
+/* ---------------------------------------------------------------------- */
+/* Feed filter                                                             */
+/* ---------------------------------------------------------------------- */
+
+.feed-filter { display: flex; gap: 8px; margin-bottom: 14px; }
+
+.filter-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 6px 16px;
+  cursor: pointer;
+}
+
+.filter-pill.active {
+  background: var(--black);
+  border-color: var(--black);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Feed + posts — each post is now its own Notion-style card               */
+/* ---------------------------------------------------------------------- */
+
+.feed { display: flex; flex-direction: column; gap: 10px; padding-bottom: 40px; }
+
+.time-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.time-divider::before,
+.time-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--amber-border);
+}
+
+.post.filtered-out,
+.time-divider.filtered-out {
+  display: none;
+}
+
+.empty-state {
+  padding: 48px 28px;
+  text-align: center;
+  color: var(--text-dim);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.empty-state p:first-child { color: var(--text); font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.empty-sub { font-size: 13.5px; line-height: 1.55; max-width: 380px; margin: 0 auto; }
+
+.empty-cta {
+  margin-top: 16px;
+  background: var(--black);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.empty-cta:hover { opacity: 0.85; }
+
+.post {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  animation: rise 0.28s ease-out;
+  transition: box-shadow 0.15s ease, background 0.6s ease;
+}
+
+.post.jump-highlight {
+  background: var(--amber-soft);
+  box-shadow: var(--shadow-card-hover);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* DiceBear avatar image, layered over the instant color+initials fallback.
+   Its onerror handler (see app.js) removes it if the CDN is unreachable,
+   leaving the fallback as a normal circle — never a broken-image icon. */
+.avatar-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #fff;
+}
+
+.avatar-fallback { position: relative; z-index: 0; }
+
+.post-name, .roster-name { cursor: pointer; }
+.post-name:hover, .roster-name:hover { text-decoration: underline; }
+
+.post-body { flex: 1; min-width: 0; }
+
+.reply-context {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+
+.reply-context:hover { color: var(--accent); text-decoration: underline; }
+
+.post-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.post-name { font-weight: 800; }
+.post-handle, .post-dot { color: var(--text-faint); }
+.post-date { color: var(--amber); font-family: var(--font-mono); font-size: 12px; }
+
+.role-tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--amber);
+  border: 1px solid var(--amber-border);
+  background: var(--amber-soft);
+  border-radius: 999px;
+  padding: 1px 8px;
+  margin-left: 2px;
+}
+
+.commentator-badge {
+  font-size: 10px;
+  color: var(--text-faint);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 7px;
+  margin-left: 4px;
+}
+
+.post-content {
+  margin-top: 5px;
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.media-image {
+  margin-top: 10px;
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  display: block;
+}
+
+.media-hint {
+  margin-top: 10px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 20px 14px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 12.5px;
+  background: var(--bg-sunken);
+}
+
+.post-actions {
+  display: flex;
+  gap: 26px;
+  margin-top: 10px;
+  color: var(--text-faint);
+  font-size: 12.5px;
+}
+
+.post-actions span { display: flex; align-items: center; gap: 6px; }
+.post-actions svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+/* ---------------------------------------------------------------------- */
+/* Right column panels (Cast page)                                         */
+/* ---------------------------------------------------------------------- */
+
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.panel-empty { color: var(--text-faint); font-size: 13px; list-style: none; margin: 0; }
+
+.panel h3 {
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
+.roster-list, .timeline-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.roster-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.roster-row:hover { background: var(--bg-hover); }
+.roster-row .avatar { width: 32px; height: 32px; font-size: 12px; }
+.roster-info { display: flex; flex-direction: column; line-height: 1.25; }
+.roster-name { font-size: 13.5px; font-weight: 700; }
+.roster-role { font-size: 11.5px; color: var(--text-faint); }
+
+.tl-item {
+  border-left: 2px solid var(--border);
+  padding: 6px 0 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  transition: background 0.15s ease;
+}
+
+.tl-item:hover { background: var(--bg-hover); }
+.tl-item.current { border-left-color: var(--amber); background: var(--amber-soft); }
+.tl-item.done { border-left-color: var(--border-strong); }
+.tl-title { font-weight: 600; }
+.tl-date { color: var(--amber); font-family: var(--font-mono); font-size: 11px; display: block; }
+.tl-gap {
+  display: inline-block;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  margin-left: 6px;
+}
+.tl-mode {
+  display: inline-block;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  margin-left: 6px;
+}
+
+.tl-item.pending-flash { background: var(--amber-soft); }
+
+/* ---------------------------------------------------------------------- */
+/* Bottom tab bar — mobile navigation                                      */
+/* ---------------------------------------------------------------------- */
+
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 40;
+  height: var(--nav-height);
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  align-items: stretch;
+  justify-content: space-around;
+  box-shadow: 0 -2px 10px rgba(20,20,19,0.04);
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 2px;
+}
+
+.nav-btn svg {
+  width: 21px; height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-btn.active { color: var(--black); }
+
+.nav-btn.nav-fab {
+  color: #fff;
+}
+
+.nav-btn.nav-fab svg {
+  width: 40px; height: 40px;
+  background: var(--black);
+  border-radius: 50%;
+  padding: 9px;
+  stroke-width: 2.2;
+  margin-top: -18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Mobile layout                                                           */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 980px) {
+  .mobile-topbar { display: flex; }
+  .bottom-nav { display: flex; }
+
+  .shell {
+    display: block;
+    padding: 12px 12px calc(var(--nav-height) + 20px);
+  }
+
+  .col-left, .col-right, .col-center {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .brand-block { display: none; }
+
+  /* IMPORTANT: scoped to .page, not [data-page] — the bottom-nav buttons
+     also carry data-page (for routing clicks), and an attribute selector
+     here would match and hide them too, collapsing the whole nav bar down
+     to whichever single button happened to match the active page. */
+  .page { display: none; }
+  .page.page-active { display: block; }
+
+  .side-page { box-shadow: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .col-left, .col-right { transition: none; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Portal transition                                                       */
+/* ---------------------------------------------------------------------- */
+
+.portal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(247, 247, 245, 0.97);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.portal-overlay.visible { display: flex; opacity: 1; }
+.portal-overlay.fading { opacity: 0; }
+
+.portal-content { text-align: center; padding: 24px; }
+
+.portal-mark {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 60px; height: 60px;
+  border-radius: 16px;
+  background: var(--black);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 26px;
+  margin-bottom: 18px;
+  animation: pulse-portal 1.6s ease-in-out infinite;
+}
+
+.portal-mark svg { width: 56%; height: 56%; }
+
+@keyframes pulse-portal {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.96); }
+}
+
+.portal-title { font-size: 17px; font-weight: 700; margin: 0 0 6px; color: var(--text); }
+.portal-sub { font-size: 13px; color: var(--text-dim); margin: 0; font-family: var(--font-mono); }
+
+/* ---------------------------------------------------------------------- */
+/* Agent profile overlay                                                   */
+/* ---------------------------------------------------------------------- */
+
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: none;
+  background: rgba(20, 20, 19, 0.45);
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+
+.profile-overlay.visible { display: flex; }
+
+.profile-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card-hover);
+  max-width: 500px;
+  width: 100%;
+  padding: 22px;
+  position: relative;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  line-height: 1;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.icon-btn:hover { background: var(--bg-hover); }
+
+.profile-close { position: absolute; top: 12px; right: 12px; }
+
+.profile-header { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; }
+.profile-header .avatar { width: 60px; height: 60px; font-size: 20px; cursor: default; }
+.profile-name { font-size: 19px; font-weight: 800; }
+.profile-handle { color: var(--text-faint); font-size: 13.5px; }
+
+.follow-btn {
+  margin-left: auto;
+  background: var(--black);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.follow-btn.following {
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+
+.profile-bio {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg-sunken);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.profile-bio dt { color: var(--text-dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 10px; font-weight: 700; }
+.profile-bio dt:first-child { margin-top: 0; }
+.profile-bio dd { margin: 2px 0 0; }
+
+.rel-row { margin-bottom: 4px; }
+.rel-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amber);
+  border: 1px solid var(--amber-border);
+  background: var(--amber-soft);
+  border-radius: 999px;
+  padding: 0px 7px;
+  margin-left: 4px;
+}
+
+.profile-posts h4 {
+  font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-dim); margin: 0 0 10px; font-weight: 700;
+}
+
+.profile-posts .post { box-shadow: none; border: 1px solid var(--border); }
+
+/* ---------------------------------------------------------------------- */
+/* Auth page                                                                */
+/* ---------------------------------------------------------------------- */
+
+.auth-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 30px 26px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 22px 0 16px;
+  background: var(--bg-sunken);
+  border-radius: 999px;
+  padding: 3px;
+}
+
+.auth-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.auth-tab.active { background: var(--bg-card); color: var(--text); box-shadow: var(--shadow-card); }
+
+.auth-form { display: flex; flex-direction: column; gap: 10px; }
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 14px;
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+.auth-divider::before, .auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.google-btn:hover { background: var(--bg-hover); }
