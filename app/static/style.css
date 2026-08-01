@@ -139,6 +139,9 @@ input:focus-visible,
   font-weight: 700;
 }
 
+#composerSection { position: relative; }
+.composer-close { display: none; position: absolute; top: 10px; right: 10px; }
+
 /* ---------------------------------------------------------------------- */
 /* Mobile topbar                                                           */
 /* ---------------------------------------------------------------------- */
@@ -677,6 +680,24 @@ input:focus-visible,
   .page.page-active { display: block; }
 
   .side-page { box-shadow: none; }
+
+  /* Composer: hidden off-screen by default, slides up as a full-screen
+     overlay when .composer-open is toggled by app.js. Deliberately a
+     simple fixed-position + class-toggle, not part of the .page system —
+     see the comment above openComposer() in app.js for why. */
+  #composerSection {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    border-radius: 0;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+  }
+
+  #composerSection.composer-open { transform: translateY(0); }
+  .composer-close { display: block; }
 }
 
 @media (prefers-reduced-motion: reduce) {

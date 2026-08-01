@@ -179,6 +179,17 @@ async def _call_anthropic(system: str, user: str) -> str:
         return data["content"][0]["text"]
 
 
+async def _call_pollinations(system: str, user: str) -> str:
+    if not config.POLLINATIONS_API_KEY:
+        raise ProviderError("no POLLINATIONS_API_KEY")
+    # Pollinations' unified API (gen.pollinations.ai) is OpenAI-compatible,
+    # so this reuses the same helper as Groq/Cerebras/OpenRouter rather
+    # than needing bespoke request/response handling.
+    return await _call_openai_compatible(
+        "https://gen.pollinations.ai/v1", config.POLLINATIONS_API_KEY, config.POLLINATIONS_MODEL, system, user
+    )
+
+
 _DEMO_OPENERS = [
     "Watching this unfold and I have thoughts.",
     "Can confirm what people are saying.",
@@ -345,12 +356,21 @@ async def _call_anthropic_tools(system: str, user: str, tools: list[dict]) -> tu
         return content, tool_calls
 
 
+async def _call_pollinations_tools(system: str, user: str, tools: list[dict]) -> tuple[str, list[dict]]:
+    if not config.POLLINATIONS_API_KEY:
+        raise ProviderError("no POLLINATIONS_API_KEY")
+    return await _call_openai_compatible_tools(
+        "https://gen.pollinations.ai/v1", config.POLLINATIONS_API_KEY, config.POLLINATIONS_MODEL, system, user, tools
+    )
+
+
 PROVIDERS = {
     "groq": _call_groq,
     "cerebras": _call_cerebras,
     "openrouter": _call_openrouter,
     "gemini": _call_gemini,
     "anthropic": _call_anthropic,
+    "pollinations": _call_pollinations,
 }
 
 TOOL_PROVIDERS = {
@@ -359,6 +379,7 @@ TOOL_PROVIDERS = {
     "openrouter": _call_openrouter_tools,
     "gemini": _call_gemini_tools,
     "anthropic": _call_anthropic_tools,
+    "pollinations": _call_pollinations_tools,
 }
 
 

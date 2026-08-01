@@ -11,6 +11,13 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 HF_API_KEY = os.getenv("HF_API_KEY", "")
+# Free-tier text fallback — used mainly when Gemini (the planning chain's
+# first choice) fails. Pollinations' current unified API requires a key
+# for reliable text generation (get one free at https://enter.pollinations.ai);
+# unlike this project's other providers, "no key set" isn't unusual for
+# Pollinations historically, but the current API does expect one, so it's
+# treated the same as every other provider here: skipped if unset.
+POLLINATIONS_API_KEY = os.getenv("POLLINATIONS_API_KEY", "")
 
 # --- Model choices per provider (override via env if a model gets retired) ---
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
@@ -18,10 +25,15 @@ CEREBRAS_MODEL = os.getenv("CEREBRAS_MODEL", "llama-3.3-70b")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "deepseek/deepseek-r1:free")
 ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+POLLINATIONS_MODEL = os.getenv("POLLINATIONS_MODEL", "openai")
 
-# --- Provider fallback order ---
-POST_PROVIDER_CHAIN = ["groq", "cerebras", "openrouter", "gemini", "anthropic", "demo"]
-PLANNING_PROVIDER_CHAIN = ["gemini", "anthropic", "openrouter", "groq", "demo"]
+# --- Provider fallback order — pollinations sits right after gemini in the
+# planning chain specifically as a fallback for when the Gemini Flash call
+# fails, per explicit request. Also added to the post chain for the same
+# resilience, one step later since Groq/Cerebras are faster/cheaper first
+# choices there. ---
+POST_PROVIDER_CHAIN = ["groq", "cerebras", "pollinations", "openrouter", "gemini", "anthropic", "demo"]
+PLANNING_PROVIDER_CHAIN = ["gemini", "pollinations", "anthropic", "openrouter", "groq", "demo"]
 
 # --- Image generation: Gemini first (as requested), Hugging Face free
 # serverless FLUX.1-schnell as fallback. ---

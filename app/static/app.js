@@ -572,16 +572,24 @@ document.addEventListener("click", (e) => {
   if (agentTarget) openProfile(agentTarget.dataset.agentId);
 });
 
-// ---- mobile page router (bottom tab bar) --------------------------------
-// Desktop shows all [data-page] sections at once (the 3-column layout);
-// below 980px only one is visible at a time, toggled by the bottom nav.
-// closeDrawers() is kept as a no-op alias so older call sites (connect(),
-// composer submit, sim-list clicks) don't need to change — it now just
-// means "return to the feed page" on mobile.
+// ---- mobile page router (bottom tab bar: Feed / Cast / Library / Account)
+// Desktop shows all .page sections at once (the 3-column layout); below
+// 980px only one is visible at a time, toggled by the bottom nav.
+//
+// The composer ("New") is DELIBERATELY NOT part of this system — it uses
+// the same simple, already-proven overlay pattern as the profile and
+// portal overlays (a .visible class toggle on a fixed-position panel)
+// instead of the page-router. This is a deliberate reliability choice:
+// the page-router has a sharper edge (every page container AND every nav
+// button share the routing data-page attribute, so a selector that isn't
+// scoped carefully enough can accidentally hide nav buttons themselves),
+// and the composer is the single most important control in the app — it
+// gets the simpler, harder-to-break mechanism on purpose.
 
-const PAGE_TITLES = { feed: "Feed", cast: "Cast", new: "New simulation", library: "Library", account: "Account" };
+const PAGE_TITLES = { feed: "Feed", cast: "Cast", library: "Library", account: "Account" };
 const mobileTopbarTitle = document.getElementById("mobileTopbarTitle");
 const bottomNavEl = document.getElementById("bottomNav");
+const composerSection = document.getElementById("composerSection");
 
 function isMobileLayout() {
   return window.innerWidth <= 980;
@@ -592,28 +600,43 @@ function showPage(name) {
   document.querySelectorAll(".page").forEach((el) => {
     el.classList.toggle("page-active", el.dataset.page === name);
   });
-  bottomNavEl.querySelectorAll(".nav-btn").forEach((b) => {
+  bottomNavEl.querySelectorAll(".nav-btn[data-page]").forEach((b) => {
     b.classList.toggle("active", b.dataset.page === name);
   });
   if (mobileTopbarTitle) mobileTopbarTitle.textContent = PAGE_TITLES[name] || "Ark";
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
 }
 
-bottomNavEl.querySelectorAll(".nav-btn").forEach((btn) => {
+bottomNavEl.querySelectorAll(".nav-btn[data-page]").forEach((btn) => {
   btn.addEventListener("click", () => showPage(btn.dataset.page));
 });
 
+function openComposer() {
+  composerSection.classList.add("composer-open");
+  document.getElementById("navNewBtn").classList.add("active");
+}
+
+function closeComposerOverlay() {
+  composerSection.classList.remove("composer-open");
+  document.getElementById("navNewBtn").classList.remove("active");
+}
+
+document.getElementById("navNewBtn").addEventListener("click", openComposer);
+document.getElementById("closeComposer").addEventListener("click", closeComposerOverlay);
+
 const emptyStateCta = document.getElementById("emptyStateCta");
-if (emptyStateCta) emptyStateCta.addEventListener("click", () => showPage("new"));
+if (emptyStateCta) emptyStateCta.addEventListener("click", openComposer);
 
 function closeDrawers() {
   showPage("feed");
+  closeComposerOverlay();
 }
 
-// First-time users have nothing to look at on the Feed page — land them
-// straight on the composer instead. Returning users with past simulations
-// land on Feed as before.
-showPage(simListEl.children.length > 0 ? "feed" : "new");
+// First-time users have nothing to look at on the Feed page — open the
+// composer directly instead of leaving them on an empty feed with no
+// obvious next step. Returning users with past simulations land on Feed.
+showPage("feed");
+if (isMobileLayout() && simListEl.children.length === 0) openComposer();
 
 // ---- composer submit -------------------------------------------------
 
